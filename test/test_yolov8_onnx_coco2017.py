@@ -5,9 +5,9 @@ import os
 import json
 
 
-model_path = "../../models/yolov8n.onnx"
-val_path = "../../dataset/val2017"
-annFile = "../../dataset/annotations/instances_val2017.json"
+model_path = "/mnt/share_disk/bruce_trie/workspace/yolov8n.onnx"
+val_path = "/mnt/share_disk/bruce_trie/misc_data_products/coco2017/images/val2017"
+annFile = "/mnt/share_disk/bruce_trie/misc_data_products/coco/annotations/instances_val2017.json"
 
 backend = "onnx"
 
