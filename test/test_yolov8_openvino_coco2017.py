@@ -3,27 +3,17 @@ from loguru import logger
 from pycocotools.coco import COCO
 import os
 import json
+from common.configs import get_cfg_defaults
+cfg = get_cfg_defaults()
 
 
-model_path = "../../models/yolov8n.onnx"
-val_path = "../../dataset/val2017"
-annFile = "../../dataset/annotations/instances_val2017.json"
+model_path = cfg.DIPOORLET.yolov8_onnx_models
+val_path = cfg.DIPOORLET.yolov8_val_path
+annFile = cfg.DIPOORLET.yolov8_annFile
+class_names = cfg.DIPOORLET.COCO_labels
 
 backend = "openvino"
 
-class_names = ('person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
-         'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign',
-         'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
-         'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
-         'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
-         'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
-         'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork',
-         'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
-         'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
-         'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
-         'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
-         'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
-         'scissors', 'teddy bear', 'hair drier', 'toothbrush')
 
 info = {
     "inputs_name": ["images"],

@@ -1,23 +1,11 @@
 from algo import infer_yolov8
 from loguru import logger
+from common.configs import get_cfg_defaults
+cfg = get_cfg_defaults()
 
-
-model_path = "../../models/yolov8n.onnx"
+class_names = cfg.DIPOORLET.COCO_labels
+model_path = cfg.DIPOORLET.yolov8_onnx_models
 backend = "onnx"
-
-class_names = ('person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
-         'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign',
-         'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
-         'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
-         'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
-         'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
-         'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork',
-         'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
-         'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
-         'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
-         'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
-         'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
-         'scissors', 'teddy bear', 'hair drier', 'toothbrush')
 
 info = {
     "inputs_name": ["images"],
@@ -35,8 +23,10 @@ infer_instance = infer_yolov8(model_path, backend)
 
 infer_instance.load_model(info)
 
-img_path = "../../dataset/val2017/000000000139.jpg"
+img_path = f"{cfg.DIPOORLET.yolov8_val_path}/000000000139.jpg"
 results, info = infer_instance.infer(img_path, info)
 logger.info(f"results : {results}")
 logger.info(f"info : {info}")
-infer_instance.show_results_single_img(img_path, results, info, "./test_res.jpg")
+
+infer_instance.show_results_single_img(img_path, results, info, f"{cfg.DIPOORLET.yolov8_outputs}/test_res.jpg")
+print(f"pic saved in  : {cfg.DIPOORLET.yolov8_outputs}/test_res.jpg")

@@ -79,3 +79,22 @@ class infer_yolov8(infer):
         if len(detections) > info["max_det"]:
             detections = detections[:info["max_det"]]
         return detections, info
+
+def download_and_convert_yolov8_onnx_model():
+    from ultralytics import YOLO
+
+    model = YOLO('yolov8n.pt')
+
+    print("开始将模型导出为 ONNX 格式...")
+    # 2. 将模型导出为 ONNX 格式
+    # format: 指定导出的格式为 onnx
+    # imgsz: 指定模型的输入图像尺寸，对于目标检测模型，这通常是必须的。640 是 YOLOv8 的常用尺寸。
+    # opset: ONNX 的算子集版本。版本 12 是一个比较通用和稳定的选择，有利于后续转换为 TensorRT。
+    model.export(format='onnx', imgsz=640, opset=11)
+
+    print("\n转换成功")
+    print("ONNX 模型已保存为 'yolov8n.onnx'")
+    
+    
+if __name__ == "__main__":
+    download_and_convert_yolov8_onnx_model()

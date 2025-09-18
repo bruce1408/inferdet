@@ -1,29 +1,19 @@
+import os
+import json
 from algo import infer_yolov8
 from loguru import logger
 from pycocotools.coco import COCO
-import os
-import json
+from common.configs import get_cfg_defaults
+cfg = get_cfg_defaults()
 
-
-model_path = "/mnt/share_disk/bruce_trie/workspace/yolov8n.onnx"
-val_path = "/mnt/share_disk/bruce_trie/misc_data_products/coco2017/images/val2017"
-annFile = "/mnt/share_disk/bruce_trie/misc_data_products/coco/annotations/instances_val2017.json"
+model_path = cfg.DIPOORLET.yolov8_onnx_models
+val_path = cfg.DIPOORLET.yolov8_val_path
+annFile = cfg.DIPOORLET.yolov8_annFile
+class_names = cfg.DIPOORLET.COCO_labels
 
 backend = "onnx"
 
-class_names = ('person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
-         'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign',
-         'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
-         'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
-         'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
-         'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
-         'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork',
-         'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
-         'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
-         'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
-         'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
-         'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
-         'scissors', 'teddy bear', 'hair drier', 'toothbrush')
+
 
 info = {
     "inputs_name": ["images"],
@@ -85,7 +75,8 @@ for img_idx in range(len(images)):
                 "area": result[5] * result[6]
             }
         )
+        
         ann_idx += 1
 
-with open("./res.json", "w") as fp_out:
+with open("/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/dipoorlet_log/4_dipoorlet_models_yolov8/yolov8_onnx_coco2017_res.json", "w") as fp_out:
     json.dump(detection_out_dict, fp_out, ensure_ascii=False, indent=4)
