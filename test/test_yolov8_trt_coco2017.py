@@ -1,5 +1,6 @@
 import os
 import json
+from tqdm import tqdm
 from algo import infer_yolov8
 from loguru import logger
 from pycocotools.coco import COCO
@@ -52,9 +53,7 @@ with infer_yolov8(model_path, backend) as infer_instance:
     ann_idx = 0
     debug_imgs = 50
     # for img_idx in range(len(images)):
-    for img_idx in range(debug_imgs):
-
-        logger.info(img_idx)
+    for img_idx in tqdm(range(len(images)), ncols=130):
 
         file_name = images[img_idx]["file_name"]
         img_path = os.path.join(val_path, file_name)
