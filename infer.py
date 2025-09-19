@@ -14,6 +14,7 @@ class infer(metaclass=ABCMeta):
             raise Exception(f"{self.model_path} does not exists.")
 
         self.backend = backend
+        self.runtime = None
         if self.backend == "onnx":
             self.infer_model_func = infer_onnx
             self.load_model_func = load_onnx
@@ -28,15 +29,47 @@ class infer(metaclass=ABCMeta):
 
     def load_model(self, info):
         logger.info("Loading model...")
-        self.model, info = self.load_model_func(self.model_path, info)
+        # 重点：根据后端类型，处理不同的返回值
+        if self.backend == "tensorrt":
+            # 如果是 tensorrt，接收三个返回值，并将 runtime 保存起来
+            self.model, info, self.runtime = self.load_model_func(self.model_path, info)
+            
+            # 新增：在加载模型后，只创建一次 context
+            self.context = self.model.create_execution_context()
+        else:
+            # 如果是其他后端，保持不变
+            self.model, info = self.load_model_func(self.model_path, info)
         logger.info("Loading model is finished.")
+    
+    def __enter__(self):
+        # __enter__方法在进入 with 语句时被调用
+        # 它需要返回一个对象，通常就是 self
+        return self
+    
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # __exit__方法在退出 with 语句时被调用
+        # 我们可以在这里执行明确的清理工作，或者什么都不做。
+        # 在我们的场景下，只要 with 语句结束，对象的生命周期就结束了，
+        # Python 的垃圾回收会自动安全地释放所有资源。
+        logger.info("Exiting context and releasing resources...")
+        self.context = None
+        self.model = None
+        self.runtime = None
+    
 
     @abstractmethod
     def preprocess(self, img_path):
         pass
 
     def infer_model(self, inputs, info):
-        return self.infer_model_func(inputs, self.model, info)
+        # 重点：根据后端，传递不同的参数
+        if self.backend == "tensorrt":
+            # 将持久化的 context 传递给推理函数
+            return self.infer_model_func(inputs, self.model, self.context, info)
+        else:
+            return self.infer_model_func(inputs, self.model, info)
+        # return self.infer_model_func(inputs, self.model, info)
 
     @abstractmethod
     def postprocess(self, outputs, info):

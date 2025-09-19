@@ -37,7 +37,7 @@ def LetterBox(img, new_shape):
 
 def get_calib_data_path(num_samples=1024):
     img_paths = []
-    data_root = "../../dataset/val2017/"
+    data_root = "/mnt/share_disk/bruce_trie/misc_data_products/coco2017/images/val2017"
     image_list = os.listdir(data_root)
     random.shuffle(image_list)
     cnt = 0

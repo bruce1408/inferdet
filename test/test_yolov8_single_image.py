@@ -23,7 +23,7 @@ infer_instance = infer_yolov8(model_path, backend)
 
 infer_instance.load_model(info)
 
-img_path = f"{cfg.DIPOORLET.yolov8_val_path}/000000000139.jpg"
+img_path = f"{cfg.SYSTEM.coco2017_val_path}/000000000139.jpg"
 results, info = infer_instance.infer(img_path, info)
 logger.info(f"results : {results}")
 logger.info(f"info : {info}")

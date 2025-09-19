@@ -60,9 +60,9 @@ def buildEngine(
 
 
 def main(mode):
-    onnx_file = "../../models/yolov8n.onnx"
-    engine_file = f"../../trt/yolov8n_{mode}.engine"
-    calibration_cache = "../../trt/yolov8n_calib.cache"
+    onnx_file = "/mnt/share_disk/bruce_trie/workspace/yolov8n.onnx"
+    engine_file = f"/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_{mode}_3.engine"
+    calibration_cache = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_calib.cache"
 
     if mode=='fp16':
         FP16_mode = True
@@ -76,12 +76,8 @@ def main(mode):
     if not os.path.exists(onnx_file):
         print("LOAD ONNX FILE FAILED: ", onnx_file)
 
-    print(
-        "Load ONNX file from:%s \nStart export, Please wait a moment..." % (onnx_file)
-    )
-    buildEngine(
-        onnx_file, engine_file, FP16_mode, INT8_mode, dataloader, calibration_cache
-    )
+    print("Load ONNX file from:%s \nStart export, Please wait a moment..." % (onnx_file))
+    buildEngine(onnx_file, engine_file, FP16_mode, INT8_mode, dataloader, calibration_cache)
     print("Export ENGINE success, Save as: ", engine_file)
 
 

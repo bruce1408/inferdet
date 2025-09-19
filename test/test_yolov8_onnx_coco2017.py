@@ -78,5 +78,5 @@ for img_idx in range(len(images)):
         
         ann_idx += 1
 
-with open("/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/dipoorlet_log/4_dipoorlet_models_yolov8/yolov8_onnx_coco2017_res.json", "w") as fp_out:
+with open(f"{cfg.DIPOORLET.tensorrt_export_dir}/yolov8_onnx_coco2017_res.json", "w") as fp_out:
     json.dump(detection_out_dict, fp_out, ensure_ascii=False, indent=4)

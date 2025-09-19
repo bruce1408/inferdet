@@ -1,35 +1,25 @@
+import os
+import json
 from algo import infer_yolov8
 from loguru import logger
 from pycocotools.coco import COCO
-import os
-import json
+from common.configs import get_cfg_defaults
+cfg = get_cfg_defaults()
 
 
-model_path = "../../trt/yolov8n_fp16.engine"
-# model_path = "../../trt/yolov8n_int8.engine"
-val_path = "../../dataset/val2017"
-annFile = "../../dataset/annotations/instances_val2017.json"
+
+model_path = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_int8_3.engine"
+val_path = cfg.SYSTEM.coco2017_val_path
+annFile = cfg.SYSTEM.coco2017_gt_annFile
 
 backend = "tensorrt"
 
-class_names = ('person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
-         'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign',
-         'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
-         'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
-         'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
-         'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
-         'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork',
-         'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
-         'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
-         'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
-         'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
-         'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
-         'scissors', 'teddy bear', 'hair drier', 'toothbrush')
+class_names = cfg.DIPOORLET.COCO_labels
 
 info = {
     "inputs_name": ["images"],
     "outputs_name" : ["output0"],
-    "output_shape": [1, 84, 8400]
+    "output_shape": [1, 84, 8400],
     "input_width": 640,
     "input_height": 640,
     "confidence_thres": 0.001,
@@ -40,51 +30,53 @@ info = {
 }
 
 # Load model
-infer_instance = infer_yolov8(model_path, backend)
-infer_instance.load_model(info)
+with infer_yolov8(model_path, backend) as infer_instance:
+    infer_instance.load_model(info)
 
 
-with open(annFile, "r") as fp_gt:
-    gt_data = json.load(fp_gt)
+    with open(annFile, "r") as fp_gt:
+        gt_data = json.load(fp_gt)
 
-detection_out_dict = {
-   "images": gt_data["images"],
-   "annotations": [],
-   "categories": gt_data["categories"]
-}
+    detection_out_dict = {
+    "images": gt_data["images"],
+    "annotations": [],
+    "categories": gt_data["categories"]
+    }
 
-# Load all COCO val images
-coco = COCO(annFile)
-image_ids = coco.getImgIds()
-images = coco.loadImgs(image_ids)
+    # Load all COCO val images
+    coco = COCO(annFile)
+    image_ids = coco.getImgIds()
+    images = coco.loadImgs(image_ids)
 
 
-ann_idx = 0
-for img_idx in range(len(images)):
+    ann_idx = 0
+    debug_imgs = 50
+    # for img_idx in range(len(images)):
+    for img_idx in range(debug_imgs):
 
-    logger.info(img_idx)
+        logger.info(img_idx)
 
-    file_name = images[img_idx]["file_name"]
-    img_path = os.path.join(val_path, file_name)
-    results, info = infer_instance.infer(img_path, info)
+        file_name = images[img_idx]["file_name"]
+        img_path = os.path.join(val_path, file_name)
+        results, info = infer_instance.infer(img_path, info)
 
-    for result in results:
-        detection_out_dict['annotations'].append(
-            {
-                "image_id": images[img_idx]["id"],
-                "bbox": [
-                    result[3],
-                    result[4],
-                    result[5],
-                    result[6]
-                ],
-                "category_id": gt_data["categories"][result[0]]["id"],
-                "id": ann_idx,
-                "score": result[2],
-                "area": result[5] * result[6]
-            }
-        )
-        ann_idx += 1
+        for result in results:
+            detection_out_dict['annotations'].append(
+                {
+                    "image_id": images[img_idx]["id"],
+                    "bbox": [
+                        result[3],
+                        result[4],
+                        result[5],
+                        result[6]
+                    ],
+                    "category_id": gt_data["categories"][result[0]]["id"],
+                    "id": ann_idx,
+                    "score": result[2],
+                    "area": result[5] * result[6]
+                }
+            )
+            ann_idx += 1
 
-with open("./res.json", "w") as fp_out:
-    json.dump(detection_out_dict, fp_out, ensure_ascii=False, indent=4)
+    with open("./res1.json", "w") as fp_out:
+        json.dump(detection_out_dict, fp_out, ensure_ascii=False, indent=4)

@@ -27,7 +27,8 @@ def allocate_buffers(engine):
     bindings = []
     stream = cuda.Stream()
     for binding in engine:
-        size = trt.volume(engine.get_binding_shape(binding)) * engine.max_batch_size
+        # size = trt.volume(engine.get_binding_shape(binding)) * engine.max_batch_size
+        size = trt.volume(engine.get_binding_shape(binding))
         dtype = trt.nptype(engine.get_binding_dtype(binding))
         # Allocate host and device buffers
         host_mem = cuda.pagelocked_empty(size, dtype)
@@ -45,14 +46,18 @@ def allocate_buffers(engine):
 def do_inference(context, bindings, inputs, outputs, stream, batch_size=1):
     # Transfer data from CPU to the GPU.
     [cuda.memcpy_htod_async(inp.device, inp.host, stream) for inp in inputs]
+    
     # Run inference.
-    context.execute_async(
-        batch_size=batch_size, bindings=bindings, stream_handle=stream.handle
-    )
+    # context.execute_async(batch_size=batch_size, bindings=bindings, stream_handle=stream.handle)    
+    context.execute_v2(bindings=bindings)
+
+    
     # Transfer predictions back from the GPU.
     [cuda.memcpy_dtoh_async(out.host, out.device, stream) for out in outputs]
+    
     # Synchronize the stream
     stream.synchronize()
+    
     # Return only the host outputs.
     return [out.host for out in outputs]
 
@@ -66,20 +71,21 @@ def deserializing_engine(engine_file):
     runtime = trt.Runtime(TRT_LOGGER)
     with open(engine_file, "rb") as f:
         serialized_engine = f.read()
-    return runtime.deserialize_cuda_engine(serialized_engine)
+
+    engine = runtime.deserialize_cuda_engine(serialized_engine)
+    return engine, runtime
 
 
 def load_tensorrt(engine_path, info=None):
-    engine = deserializing_engine(engine_path)
-    return engine, info
+    engine, runtime = deserializing_engine(engine_path)
+    return engine, info, runtime
+    # return engine, info
 
-def infer_tensorrt(inps, engine, info):
+def infer_tensorrt(inps, engine, context, info):
 
     shape_of_output = info["output_shape"]
-    context = engine.create_execution_context()
-    inputs, outputs, bindings, stream = allocate_buffers(
-        engine
-    ) 
+    # context = engine.create_execution_context()
+    inputs, outputs, bindings, stream = allocate_buffers(engine) 
     inputs[0].host = inps[0].reshape(-1)
     trt_outputs = do_inference(
             context, bindings=bindings, inputs=inputs, outputs=outputs, stream=stream
