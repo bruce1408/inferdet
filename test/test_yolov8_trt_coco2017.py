@@ -58,7 +58,7 @@ with infer_yolov8(model_path, backend) as infer_instance:
         file_name = images[img_idx]["file_name"]
         img_path = os.path.join(val_path, file_name)
         results, info = infer_instance.infer(img_path, info)
-
+        
         for result in results:
             detection_out_dict['annotations'].append(
                 {
