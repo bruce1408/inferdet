@@ -4,8 +4,11 @@ from common.configs import get_cfg_defaults
 cfg = get_cfg_defaults()
 
 class_names = cfg.DIPOORLET.COCO_labels
-model_path = cfg.DIPOORLET.yolov8_onnx_models
-backend = "onnx"
+# model_path = cfg.DIPOORLET.yolov8_onnx_models
+model_path = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_int8_3.engine"
+
+# backend = "onnx"
+backend = "tensorrt"
 
 info = {
     "inputs_name": ["images"],
@@ -28,5 +31,5 @@ results, info = infer_instance.infer(img_path, info)
 logger.info(f"results : {results}")
 logger.info(f"info : {info}")
 
-infer_instance.show_results_single_img(img_path, results, info, f"{cfg.DIPOORLET.yolov8_outputs}/test_res.jpg")
-print(f"pic saved in  : {cfg.DIPOORLET.yolov8_outputs}/test_res.jpg")
+infer_instance.show_results_single_img(img_path, results, info, f"{cfg.DIPOORLET.yolov8_outputs}/test_res_trt.jpg")
+print(f"pic saved in  : {cfg.DIPOORLET.yolov8_outputs}/test_res_trt.jpg")

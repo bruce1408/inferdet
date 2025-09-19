@@ -61,7 +61,7 @@ def buildEngine(
 
 def main(mode):
     onnx_file = "/mnt/share_disk/bruce_trie/workspace/yolov8n.onnx"
-    engine_file = f"/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_{mode}_3.engine"
+    engine_file = f"/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_{mode}.engine"
     calibration_cache = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_calib.cache"
 
     if mode=='fp16':

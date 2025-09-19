@@ -51,7 +51,7 @@ with infer_yolov8(model_path, backend) as infer_instance:
 
 
     ann_idx = 0
-    debug_imgs = 50
+    # debug_imgs = 50
     # for img_idx in range(len(images)):
     for img_idx in tqdm(range(len(images)), ncols=130):
 
@@ -76,6 +76,6 @@ with infer_yolov8(model_path, backend) as infer_instance:
                 }
             )
             ann_idx += 1
-
-    with open("./res1.json", "w") as fp_out:
+    
+    with open(f"{cfg.DIPOORLET.yolov8_outputs}/yolov8_trt_coco2017.json", "w") as fp_out:
         json.dump(detection_out_dict, fp_out, ensure_ascii=False, indent=4)
