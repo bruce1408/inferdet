@@ -1,4 +1,6 @@
 import os
+import json
+import cv2
 import random
 import numpy as np
 import pandas as pd
@@ -7,8 +9,6 @@ from PIL import Image
 import tensorrt as trt
 import pycuda.driver as cuda
 import pycuda.autoinit
-import json
-import cv2
 
 
 

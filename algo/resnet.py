@@ -17,7 +17,7 @@ class infer_resnet(infer):
         img = np.transpose(img, (2, 0, 1)) # HWC to CHW
         img = np.expand_dims(img, axis=0).astype(np.float32) # NCHW, N=1, img shape is (1, 3, 224, 224)
         return [img], info
-
+    
     def postprocess(self, outputs, info):
         class_id = np.argmax(outputs[0], axis=1)
         return class_id, info

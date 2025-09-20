@@ -2,14 +2,14 @@ import os
 import json
 from tqdm import tqdm
 from algo import infer_yolov8
-from loguru import logger
 from pycocotools.coco import COCO
 from common.configs import get_cfg_defaults
 cfg = get_cfg_defaults()
 
 
 
-model_path = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_int8_3.engine"
+# model_path = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_int8_3.engine"
+model_path = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_fp16.engine"
 val_path = cfg.SYSTEM.coco2017_val_path
 annFile = cfg.SYSTEM.coco2017_gt_annFile
 
@@ -77,5 +77,5 @@ with infer_yolov8(model_path, backend) as infer_instance:
             )
             ann_idx += 1
 
-    with open(f"{cfg.DIPOORLET.yolov8_outputs}/yolov8_trt_coco2017.json", "w") as fp_out:
+    with open(f"{cfg.DIPOORLET.yolov8_outputs}/yolov8_trt_coco2017_fp16.json", "w") as fp_out:
         json.dump(detection_out_dict, fp_out, ensure_ascii=False, indent=4)

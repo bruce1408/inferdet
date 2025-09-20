@@ -22,7 +22,7 @@ DONE (t=6.75s).
 
 
 
-============================= YOLOV8n trt int8 结果 ============================
+============================= YOLOV8n trt INT8 结果 ============================
 DONE (t=6.38s).
  Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.307
  Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.439
@@ -40,5 +40,24 @@ DONE (t=6.38s).
  0.2651435  0.43363534 0.47733002 0.25083158 0.53090144 0.63102454]
 
 
+============================= YOLOV8n trt FP16 结果 ============================
+ DONE (t=6.75s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.359
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.506
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.389
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.169
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.396
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.509
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.291
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.475
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.521
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.295
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.579
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.671
+[0.35896817 0.50562978 0.38856545 0.16932209 0.39572192 0.50878674
+ 0.29124173 0.47496459 0.52099237 0.29452769 0.57912505 0.67146919]
+
+=========================== qnn 命令 ==========================================
+qnn-onnx-converter --input_network /tmp/tmppujv1zam/0/od_bev_25_0219.0.onnx -o /tmp/tmppujv1zam/0/od_bev_25_0219.0.cpp --input_list /tmp/tmp2v29jmn5/input_list --use_per_channel_quantization --act_bitwidth 8 --bias_bitwidth 32 --weights_bitwidth 8
 
  

@@ -7,7 +7,6 @@ cfg = get_cfg_defaults()
 class_names = cfg.DIPOORLET.COCO_labels
 model_path = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_int8.engine"
 
-# backend = "onnx"
 backend = "tensorrt"
 
 info = {
