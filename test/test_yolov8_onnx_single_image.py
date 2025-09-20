@@ -4,11 +4,11 @@ from common.configs import get_cfg_defaults
 cfg = get_cfg_defaults()
 
 class_names = cfg.DIPOORLET.COCO_labels
-# model_path = cfg.DIPOORLET.yolov8_onnx_models
-model_path = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_int8_3.engine"
+model_path = cfg.DIPOORLET.yolov8_onnx_models
+# model_path = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_int8_3.engine"
 
-# backend = "onnx"
-backend = "tensorrt"
+backend = "onnx"
+# backend = "tensorrt"
 
 info = {
     "inputs_name": ["images"],

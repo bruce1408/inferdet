@@ -26,12 +26,14 @@ with infer_yolov8(model_path, backend) as infer_instance:
     infer_instance.load_model(info)
 
 
-    img_path = f"{cfg.SYSTEM.coco2017_val_path}/000000000139.jpg"
-    img_path = f"{cfg.SYSTEM.coco2017_val_path}/000000000285.jpg"
-    img_path = f"{cfg.SYSTEM.coco2017_val_path}/000000405691.jpg"
+    # img_path = f"{cfg.SYSTEM.coco2017_val_path}/000000000139.jpg"
+    # img_path = f"{cfg.SYSTEM.coco2017_val_path}/000000000285.jpg"
+    # img_path = f"{cfg.SYSTEM.coco2017_val_path}/000000001296.jpg"
+    # img_path = f"{cfg.SYSTEM.coco2017_val_path}/000000001675.jpg"
+    img_path = f"{cfg.SYSTEM.coco2017_val_path}/000000556000.jpg"
     results, info = infer_instance.infer(img_path, info)
     logger.info(f"results : {results}")
     logger.info(f"info : {info}")
 
-    infer_instance.show_results_single_img(img_path, results, class_names, f"{cfg.DIPOORLET.yolov8_outputs}/test_res_trt_691.jpg")
-    print_colored_text(f"pic saved in :\n{cfg.DIPOORLET.yolov8_outputs}/test_res_trt_691.jpg", "green")
+    infer_instance.show_results_single_img(img_path, results, class_names, f"{cfg.DIPOORLET.yolov8_outputs}/test_res_trt_724.jpg")
+    print_colored_text(f"pic saved in :\n{cfg.DIPOORLET.yolov8_outputs}/test_res_trt_724.jpg", "green")
