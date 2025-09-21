@@ -71,9 +71,7 @@ class CalibDataLoader:
         self.batch_size = batch_size
         self.calib_count = calib_count
         self.image_list = get_calib_data_path()
-        self.calibration_data = np.zeros(
-            (self.batch_size, 3, 640, 640), dtype=np.float32
-        )
+        self.calibration_data = np.zeros((self.batch_size, 3, 640, 640), dtype=np.float32)
 
     def reset(self):
         self.index = 0
