@@ -39,7 +39,9 @@ additional_encodings = {
 }
 
 input_names= [
-    "/model.22/Concat_3_output_0"
+    "/model.22/Reshape_output_0",
+    "/model.22/Reshape_1_output_0",
+    "/model.22/Reshape_2_output_0"
 ]
 
 output_names = [
@@ -85,7 +87,6 @@ def dump_model_info(
     
     if quantify_parameters:
         param_encodings = {}
-        # 提取初始化器 (initializers)
         for initializer in graph.initializer:
             param_name = initializer.name
             if param_name not in param_encodings:
@@ -110,4 +111,4 @@ output_json_dir = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/inferdet
 output_json_path = f"{output_json_dir}/yolov8_overrides_mixed.json"
 
 utils.extract_model(onnx_model_path, output_path, input_names, output_names)
-dump_model_info(onnx_model_path, output_json_path, additional_encodings)
+dump_model_info(output_path, output_json_path, additional_encodings)
