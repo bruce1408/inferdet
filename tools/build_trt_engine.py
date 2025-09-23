@@ -32,7 +32,7 @@ info = {
 
 
 def buildEngine(
-    onnx_file, engine_file, FP16_mode, INT8_mode, data_loader, calibration_table_path
+    onnx_file, engine_file, mode, data_loader, calibration_table_path
 ):
     builder = trt.Builder(LOGGER)
     network = builder.create_network(
@@ -44,13 +44,13 @@ def buildEngine(
 
     config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 16 * (1 << 20))
 
-    if FP16_mode == True:
+    if mode == "fp16":
         config.set_flag(trt.BuilderFlag.FP16)
 
-    elif INT8_mode == True:
+    elif mode == "int8":
         config.set_flag(trt.BuilderFlag.INT8)
         config.int8_calibrator = Calibrator(data_loader, calibration_table_path)
-
+    
     engine = builder.build_serialized_network(network, config)
     if engine is None:
         print("EXPORT ENGINE FAILED!")
@@ -61,23 +61,16 @@ def buildEngine(
 
 def main(mode):
     onnx_file = "/mnt/share_disk/bruce_trie/workspace/yolov8n.onnx"
-    engine_file = f"/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_{mode}.engine"
-    calibration_cache = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/yolov8n_calib.cache"
+    engine_file = f"/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/trt_yolov8/yolov8n_trt_{mode}.engine"
+    calibration_cache = "/mnt/share_disk/bruce_trie/workspace/Quantizer-Tools/_outputs/tensorrt_log/trt_yolov8/yolov8n_calib.cache"
     
-    if mode=='fp16':
-        FP16_mode = True
-        INT8_mode = False
-    else:
-        INT8_mode = True
-        FP16_mode = False
-
     dataloader = CalibDataLoader(batch_size=1, calib_count=1024, info=info)
 
     if not os.path.exists(onnx_file):
         print("LOAD ONNX FILE FAILED: ", onnx_file)
 
     print("Load ONNX file from:%s \nStart export, Please wait a moment..." % (onnx_file))
-    buildEngine(onnx_file, engine_file, FP16_mode, INT8_mode, dataloader, calibration_cache)
+    buildEngine(onnx_file, engine_file, mode, dataloader, calibration_cache)
     print("Export ENGINE success, Save as: ", engine_file)
 
 

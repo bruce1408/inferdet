@@ -49,8 +49,8 @@ def do_inference(context, bindings, inputs, outputs, stream, batch_size=1):
     
     # Run inference.
     # context.execute_async(batch_size=batch_size, bindings=bindings, stream_handle=stream.handle)    
-    context.execute_v2(bindings=bindings)
-
+    context.execute_async_v2(bindings=bindings, stream_handle=stream.handle)
+    
     
     # Transfer predictions back from the GPU.
     [cuda.memcpy_dtoh_async(out.host, out.device, stream) for out in outputs]
@@ -79,7 +79,6 @@ def deserializing_engine(engine_file):
 def load_tensorrt(engine_path, info=None):
     engine, runtime = deserializing_engine(engine_path)
     return engine, info, runtime
-    # return engine, info
 
 def infer_tensorrt(inps, engine, context, info):
 
@@ -88,7 +87,6 @@ def infer_tensorrt(inps, engine, context, info):
     inputs, outputs, bindings, stream = allocate_buffers(engine) 
     inputs[0].host = inps[0].reshape(-1)
     trt_outputs = do_inference(
-            context, bindings=bindings, inputs=inputs, outputs=outputs, stream=stream
-        )
+            context, bindings=bindings, inputs=inputs, outputs=outputs, stream=stream)
     feat = postprocess_the_outputs(trt_outputs[0], shape_of_output)
     return feat, info
