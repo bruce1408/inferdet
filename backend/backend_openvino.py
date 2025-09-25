@@ -1,4 +1,4 @@
-import openvino.runtime as ov
+import openvino as ov
 import ipywidgets as widgets
 
 core = ov.Core()
